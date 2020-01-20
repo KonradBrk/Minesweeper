@@ -92,6 +92,7 @@ public class Interface extends JFrame{
                 ActionListener action = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        newButton.setSelected(true);
                         showField(newButton);
                     }
                 };
@@ -127,40 +128,36 @@ public class Interface extends JFrame{
     }
 
     private void showAllEmptyFields(Button button) {
-        selectEmpty(button);
+            selectEmpty(button);
             if (canGoRight(button)) {
                 var nextButton = map[button.getRow()][button.getColumn() + 1];
-                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else
-                    if (nextButton.getValue() > 0)
-                        selectWithValue(nextButton);
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                    selectWithValue(nextButton);
             }
             if (canGoLeft(button)) {
                 var nextButton = map[button.getRow()][button.getColumn() - 1];
-                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else
-                    if (nextButton.getValue() > 0)
-                        selectWithValue(nextButton);
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                    selectWithValue(nextButton);
             }
             if (canGoUp(button)) {
-                var nextButton = map[button.getRow()-1][button.getColumn()];
-                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                var nextButton = map[button.getRow() - 1][button.getColumn()];
+                if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else
-                    if (nextButton.getValue() > 0)
-                        selectWithValue(nextButton);
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                    selectWithValue(nextButton);
             }
             if (canGoDown(button)) {
-                var nextButton = map[button.getRow()+1][button.getColumn()];
-                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                var nextButton = map[button.getRow() + 1][button.getColumn()];
+                if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else
-                    if (nextButton.getValue() > 0)
-                        selectWithValue(nextButton);
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                    selectWithValue(nextButton);
             }
-        }
+    }
 
     private void selectWithValue(Button nextButton) {
         clickToWin--;
