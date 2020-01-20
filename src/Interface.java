@@ -92,8 +92,6 @@ public class Interface extends JFrame{
                 ActionListener action = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        newButton.setSelected(true);
-                        clickToWin--;
                         showField(newButton);
                     }
                 };
@@ -105,17 +103,14 @@ public class Interface extends JFrame{
     }
 
     private void showField(Button button){
-        int rows = button.getRow();
-        int columns = button.getColumn();
-        if (map[rows][columns].getValue()==-1){
+        if (button.getValue()==-1){
             button.setText("B");
             button.setSelected(true);
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(),"Game Over");
-        } else if (map[rows][columns].getValue()==0){
+        } else if (isSelectedCell(button) & button.getValue()==0){
             showAllEmptyFields(button);
-        } else {
-            button.setSelected(true);
-            button.setText(map[rows][columns].getValue()+"");
+        } else if (isSelectedCell(button)) {
+            selectWithValue(button);
             if (clickToWin == 0) JOptionPane.showMessageDialog(JOptionPane.getRootFrame(),"You Win");
         }
     }
@@ -132,53 +127,52 @@ public class Interface extends JFrame{
     }
 
     private void showAllEmptyFields(Button button) {
-            button.setSelected(true);
-            button.setText("");
+        selectEmpty(button);
             if (canGoRight(button)) {
                 var nextButton = map[button.getRow()][button.getColumn() + 1];
-                if (!isSelectedCell(nextButton) && nextButton.getValue() == 0) {
-                    showAllEmptyFields(map[button.getRow()][button.getColumn() + 1]);
-                } else {
-                    if (isSelectedCell(button) && nextButton.getValue() != 0) {
-                        nextButton.setSelected(true);
-                        nextButton.setText(map[nextButton.getRow()][nextButton.getColumn()].getValue() + "");
-                    }
-                }
+                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                    showAllEmptyFields(nextButton);
+                else
+                    if (nextButton.getValue() > 0)
+                        selectWithValue(nextButton);
             }
             if (canGoLeft(button)) {
                 var nextButton = map[button.getRow()][button.getColumn() - 1];
-                if (!isSelectedCell(nextButton)  && nextButton.getValue()==0) {
-                    showAllEmptyFields(map[button.getRow()][button.getColumn() - 1]);
-                } else {
-                    if (isSelectedCell(button) && nextButton.getValue() != 0) {
-                        nextButton.setSelected(true);
-                        nextButton.setText(map[nextButton.getRow()][nextButton.getColumn()].getValue() + "");
-                    }
-                }
+                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                    showAllEmptyFields(nextButton);
+                else
+                    if (nextButton.getValue() > 0)
+                        selectWithValue(nextButton);
             }
             if (canGoUp(button)) {
                 var nextButton = map[button.getRow()-1][button.getColumn()];
-                if (!isSelectedCell(nextButton)  && nextButton.getValue()==0) {
-                    showAllEmptyFields(map[button.getRow() - 1][button.getColumn()]);
-                } else {
-                    if (isSelectedCell(button) && nextButton.getValue() != 0) {
-                        nextButton.setSelected(true);
-                        nextButton.setText(map[nextButton.getRow()][nextButton.getColumn()].getValue() + "");
-                    }
-                }
+                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                    showAllEmptyFields(nextButton);
+                else
+                    if (nextButton.getValue() > 0)
+                        selectWithValue(nextButton);
             }
             if (canGoDown(button)) {
                 var nextButton = map[button.getRow()+1][button.getColumn()];
-                if (!isSelectedCell(nextButton)  && nextButton.getValue()==0) {
-                    showAllEmptyFields(map[button.getRow() + 1][button.getColumn()]);
-                } else {
-                    if (isSelectedCell(button) && nextButton.getValue() != 0) {
-                        nextButton.setSelected(true);
-                        nextButton.setText(map[nextButton.getRow()][nextButton.getColumn()].getValue() + "");
-                    }
-                }
+                if (!isSelectedCell(nextButton) && nextButton.getValue()==0)
+                    showAllEmptyFields(nextButton);
+                else
+                    if (nextButton.getValue() > 0)
+                        selectWithValue(nextButton);
             }
         }
+
+    private void selectWithValue(Button nextButton) {
+        clickToWin--;
+        nextButton.setSelected(true);
+        nextButton.setText(nextButton.getValue() + "");
+    }
+
+    private void selectEmpty(Button button) {
+        clickToWin--;
+        button.setSelected(true);
+        button.setText("");
+    }
 
     private Boolean canGoUp(Button button){
         return button.getRow() - 1 >= 0;
