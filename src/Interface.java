@@ -133,29 +133,73 @@ public class Interface extends JFrame{
                 var nextButton = map[button.getRow()][button.getColumn() + 1];
                 if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
                     selectWithValue(nextButton);
+                    if (canGoUp(nextButton)) {
+                        var nextButtonUp = map[nextButton.getRow() - 1][nextButton.getColumn()];
+                        if (nextButtonUp.getValue() > 0 && !isSelectedCell(nextButtonUp))
+                            selectWithValue(nextButtonUp);
+                    }
+                    if (canGoDown(nextButton)) {
+                        var nextButtonDown = map[nextButton.getRow() + 1][nextButton.getColumn()];
+                        if (nextButtonDown.getValue() > 0 && !isSelectedCell(nextButtonDown))
+                            selectWithValue(nextButtonDown);
+                    }
+                }
             }
             if (canGoLeft(button)) {
                 var nextButton = map[button.getRow()][button.getColumn() - 1];
                 if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
                     selectWithValue(nextButton);
+                    if (canGoUp(nextButton)) {
+                        var nextButtonUp = map[nextButton.getRow() - 1][nextButton.getColumn()];
+                        if (nextButtonUp.getValue() > 0 && !isSelectedCell(nextButtonUp))
+                            selectWithValue(nextButtonUp);
+                    }
+                    if (canGoDown(nextButton)) {
+                        var nextButtonDown = map[nextButton.getRow() + 1][nextButton.getColumn()];
+                        if (nextButtonDown.getValue() > 0 && !isSelectedCell(nextButtonDown))
+                            selectWithValue(nextButtonDown);
+                    }
+                }
             }
             if (canGoUp(button)) {
                 var nextButton = map[button.getRow() - 1][button.getColumn()];
                 if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
                     selectWithValue(nextButton);
+                    if(canGoLeft(nextButton)) {
+                        var nextButtonLeft = map[nextButton.getRow()][nextButton.getColumn() - 1];
+                        if(nextButtonLeft.getValue() > 0 && !isSelectedCell(nextButtonLeft))
+                            selectWithValue(nextButtonLeft);
+                    }
+                    if(canGoRight(nextButton)) {
+                        var nextButtonRight = map[nextButton.getRow()][nextButton.getColumn() + 1];
+                        if (nextButtonRight.getValue() > 0 && !isSelectedCell(nextButtonRight))
+                            selectWithValue(nextButtonRight);
+                    }
+                }
             }
             if (canGoDown(button)) {
                 var nextButton = map[button.getRow() + 1][button.getColumn()];
                 if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                     showAllEmptyFields(nextButton);
-                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0)
+                else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
                     selectWithValue(nextButton);
+                    if(canGoLeft(nextButton)) {
+                        var nextButtonLeft = map[nextButton.getRow()][nextButton.getColumn() - 1];
+                        if(nextButtonLeft.getValue() > 0 && !isSelectedCell(nextButtonLeft))
+                            selectWithValue(nextButtonLeft);
+                    }
+                    if(canGoRight(nextButton)) {
+                        var nextButtonRight = map[nextButton.getRow()][nextButton.getColumn() + 1];
+                        if (nextButtonRight.getValue() > 0 && !isSelectedCell(nextButtonRight))
+                            selectWithValue(nextButtonRight);
+                    }
+                }
             }
     }
 
