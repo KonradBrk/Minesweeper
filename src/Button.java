@@ -4,6 +4,7 @@ public class Button extends JToggleButton {
     private int value;
     private final int row;
     private final int column;
+    private boolean first;
 
 
     public Button(int row, int column) {
@@ -27,4 +28,13 @@ public class Button extends JToggleButton {
     public int getColumn() {
         return column;
     }
+
+    public void setFirst(boolean first) {
+        this.first = first;
+    }
+
+    public boolean isFirst(){
+        return first;
+    }
+
 }

@@ -10,6 +10,7 @@ public class Game extends JFrame {
     private Button[][] map;
     private JFrame frame;
     private JPanel layout;
+    private boolean started;
     private int bombCounter;
     private int clickCounter;
     private int clickToWin;
@@ -19,26 +20,24 @@ public class Game extends JFrame {
         frameSizeAdjustment(size);
         printingUi();
         frameOtherAdjustments();
-        generatingBombs();
-        countingBombs();
-        this.clickToWin = clickCounter - bombCounter;
+        this.started = false;
     }
 
     private void frameSizeAdjustment(Size size) {
         if (size == Size.SMALL) {
             this.map = new Button[8][8];
             this.layout = new JPanel(new GridLayout(8, 8));
-            frame.setSize(800, 800);
+            frame.setSize(1400, 900);
         }
         if (size == Size.MEDIUM) {
             this.map = new Button[16][16];
             this.layout = new JPanel(new GridLayout(16, 16));
-            frame.setSize(800, 800);
+            frame.setSize(1400, 900);
         }
         if (size == Size.LARGE) {
             this.map = new Button[32][32];
             this.layout = new JPanel(new GridLayout(32, 32));
-            frame.setSize(800, 800);
+            frame.setSize(1400, 900);
         }
     }
 
@@ -48,18 +47,94 @@ public class Game extends JFrame {
         frame.setVisible(true);
     }
 
+    private void generatingAndCountingBombs() {
+        generatingFirstArea();
+        generatingBombs();
+        countingBombs();
+        this.clickToWin = clickCounter - bombCounter;
+        cheat();
+    }
+
     private void generatingBombs() {
         Random r = new Random();
-        for (int i = 0; i < map.length; i++) {
+        for (int i = 0; i < map.length*2; i++) {
             int rows = r.nextInt(map.length);
             int columns = r.nextInt(map.length);
-            if (map[rows][columns].getValue() != -1) {
+            if (map[rows][columns].getValue() != -1 && !map[rows][columns].isFirst()) {
                 map[rows][columns].setValue(-1);
                 bombCounter++;
             } else {
                 i--;
             }
         }
+    }
+
+    private void generatingFirstArea() {
+        var first = findFirst();
+
+        int startRow = 0;
+        int startColumn = 0;
+        int endRow = 0;
+        int endColumn = 0;
+
+        assert first != null;
+        if (canGoUp(first)) startRow = first.getRow() - 1;
+        else startRow = first.getRow();
+
+        if (canGoDown(first)) endRow = first.getRow() + 1;
+        else endRow = first.getRow();
+
+        if (canGoLeft(first)) startColumn = first.getColumn() - 1;
+        else startColumn = first.getColumn();
+
+        if (canGoRight(first)) endColumn = first.getColumn() + 1;
+        else endColumn = first.getColumn();
+
+
+        for (int rows = startRow; rows <= endRow; rows++) {
+            for (int columns = startColumn; columns <= endColumn; columns++) {
+                map[rows][columns].setFirst(true);
+            }
+        }
+    }
+
+    private void checkingCellsWithValues(Button button) {
+
+        int startRow = 0;
+        int startColumn = 0;
+        int endRow = 0;
+        int endColumn = 0;
+
+        if (canGoUp(button)) startRow = button.getRow() - 1;
+        else startRow = button.getRow();
+
+        if (canGoDown(button)) endRow = button.getRow() + 1;
+        else endRow = button.getRow();
+
+        if (canGoLeft(button)) startColumn = button.getColumn() - 1;
+        else startColumn = button.getColumn();
+
+        if (canGoRight(button)) endColumn = button.getColumn() + 1;
+        else endColumn = button.getColumn();
+
+
+        for (int rows = startRow; rows <= endRow; rows++) {
+            for (int columns = startColumn; columns <= endColumn; columns++) {
+                if (map[rows][columns].getValue() > 0 && !isSelectedCell(map[rows][columns])) {
+                    selectWithValue(map[rows][columns]);
+                }
+            }
+        }
+    }
+
+    private Button findFirst(){
+        for (int rows = 0; rows < map.length; rows++) {
+            for (int columns = 0; columns < map.length; columns++) {
+                if (map[rows][columns].isFirst())
+                    return map[rows][columns];
+            }
+        }
+        return null;
     }
 
     private void countingBombs() {
@@ -92,8 +167,16 @@ public class Game extends JFrame {
                 ActionListener action = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        newButton.setSelected(true);
-                        showField(newButton);
+                        if (!started){
+                            newButton.setFirst(true);
+                            newButton.setSelected(true);
+                            generatingAndCountingBombs();
+                            showField(newButton);
+                            started = true;
+                        } else {
+                            newButton.setSelected(true);
+                            showField(newButton);
+                        }
                     }
                 };
                 newButton.addActionListener(action);
@@ -129,77 +212,26 @@ public class Game extends JFrame {
 
     private void showAllEmptyFields(Button button) {
         selectEmpty(button);
+        checkingCellsWithValues(button);
         if (canGoRight(button)) {
             var nextButton = map[button.getRow()][button.getColumn() + 1];
             if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                 showAllEmptyFields(nextButton);
-            else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
-                selectWithValue(nextButton);
-                if (canGoUp(nextButton)) {
-                    var nextButtonUp = map[nextButton.getRow() - 1][nextButton.getColumn()];
-                    if (nextButtonUp.getValue() > 0 && !isSelectedCell(nextButtonUp))
-                        selectWithValue(nextButtonUp);
-                }
-                if (canGoDown(nextButton)) {
-                    var nextButtonDown = map[nextButton.getRow() + 1][nextButton.getColumn()];
-                    if (nextButtonDown.getValue() > 0 && !isSelectedCell(nextButtonDown))
-                        selectWithValue(nextButtonDown);
-                }
-            }
         }
         if (canGoLeft(button)) {
             var nextButton = map[button.getRow()][button.getColumn() - 1];
             if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                 showAllEmptyFields(nextButton);
-            else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
-                selectWithValue(nextButton);
-                if (canGoUp(nextButton)) {
-                    var nextButtonUp = map[nextButton.getRow() - 1][nextButton.getColumn()];
-                    if (nextButtonUp.getValue() > 0 && !isSelectedCell(nextButtonUp))
-                        selectWithValue(nextButtonUp);
-                }
-                if (canGoDown(nextButton)) {
-                    var nextButtonDown = map[nextButton.getRow() + 1][nextButton.getColumn()];
-                    if (nextButtonDown.getValue() > 0 && !isSelectedCell(nextButtonDown))
-                        selectWithValue(nextButtonDown);
-                }
-            }
         }
         if (canGoUp(button)) {
             var nextButton = map[button.getRow() - 1][button.getColumn()];
             if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                 showAllEmptyFields(nextButton);
-            else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
-                selectWithValue(nextButton);
-                if (canGoLeft(nextButton)) {
-                    var nextButtonLeft = map[nextButton.getRow()][nextButton.getColumn() - 1];
-                    if (nextButtonLeft.getValue() > 0 && !isSelectedCell(nextButtonLeft))
-                        selectWithValue(nextButtonLeft);
-                }
-                if (canGoRight(nextButton)) {
-                    var nextButtonRight = map[nextButton.getRow()][nextButton.getColumn() + 1];
-                    if (nextButtonRight.getValue() > 0 && !isSelectedCell(nextButtonRight))
-                        selectWithValue(nextButtonRight);
-                }
-            }
         }
         if (canGoDown(button)) {
             var nextButton = map[button.getRow() + 1][button.getColumn()];
             if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
                 showAllEmptyFields(nextButton);
-            else if (!isSelectedCell(nextButton) && nextButton.getValue() > 0) {
-                selectWithValue(nextButton);
-                if (canGoLeft(nextButton)) {
-                    var nextButtonLeft = map[nextButton.getRow()][nextButton.getColumn() - 1];
-                    if (nextButtonLeft.getValue() > 0 && !isSelectedCell(nextButtonLeft))
-                        selectWithValue(nextButtonLeft);
-                }
-                if (canGoRight(nextButton)) {
-                    var nextButtonRight = map[nextButton.getRow()][nextButton.getColumn() + 1];
-                    if (nextButtonRight.getValue() > 0 && !isSelectedCell(nextButtonRight))
-                        selectWithValue(nextButtonRight);
-                }
-            }
         }
     }
 
