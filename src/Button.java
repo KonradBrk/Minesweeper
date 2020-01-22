@@ -5,6 +5,7 @@ public class Button extends JToggleButton {
     private final int row;
     private final int column;
     private boolean first;
+    private boolean revaled;
 
 
     public Button(int row, int column) {
@@ -37,4 +38,11 @@ public class Button extends JToggleButton {
         return first;
     }
 
+    public boolean isRevaled(){
+        return revaled;
+    }
+
+    public void setRevaled(boolean revaled) {
+        this.revaled = revaled;
+    }
 }

@@ -235,16 +235,22 @@ public class Game extends JFrame {
         }
     }
 
-    private void selectWithValue(Button nextButton) {
-        clickToWin--;
-        nextButton.setSelected(true);
-        nextButton.setText(nextButton.getValue() + "");
+    private void selectWithValue(Button button) {
+        if (!button.isRevaled()) {
+            clickToWin--;
+            button.setSelected(true);
+            button.setText(button.getValue() + "");
+            button.setRevaled(true);
+        }
     }
 
     private void selectEmpty(Button button) {
-        clickToWin--;
-        button.setSelected(true);
-        button.setText("");
+        if (!button.isRevaled()) {
+            clickToWin--;
+            button.setSelected(true);
+            button.setText("");
+            button.setRevaled(true);
+        }
     }
 
     private Boolean canGoUp(Button button) {
