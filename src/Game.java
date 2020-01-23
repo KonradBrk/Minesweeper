@@ -52,7 +52,6 @@ public class Game extends JFrame {
         generatingBombs();
         countingBombs();
         this.clickToWin = clickCounter - bombCounter;
-        cheat();
     }
 
     private void generatingBombs() {
@@ -190,6 +189,7 @@ public class Game extends JFrame {
         if (button.getValue() == -1) {
             button.setText("B");
             button.setSelected(true);
+            cheat();
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Game Over");
         } else if (isSelectedCell(button) & button.getValue() == 0) {
             showAllEmptyFields(button);
@@ -236,20 +236,20 @@ public class Game extends JFrame {
     }
 
     private void selectWithValue(Button button) {
-        if (!button.isRevaled()) {
+        if (!button.isRevealed()) {
             clickToWin--;
             button.setSelected(true);
             button.setText(button.getValue() + "");
-            button.setRevaled(true);
+            button.setRevealed(true);
         }
     }
 
     private void selectEmpty(Button button) {
-        if (!button.isRevaled()) {
+        if (!button.isRevealed()) {
             clickToWin--;
             button.setSelected(true);
             button.setText("");
-            button.setRevaled(true);
+            button.setRevealed(true);
         }
     }
 
