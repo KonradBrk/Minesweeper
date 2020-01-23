@@ -189,17 +189,20 @@ public class Game extends JFrame {
         if (button.getValue() == -1) {
             button.setText("B");
             button.setSelected(true);
-            cheat();
+            endGame();
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Game Over");
         } else if (isSelectedCell(button) & button.getValue() == 0) {
             showAllEmptyFields(button);
         } else if (isSelectedCell(button)) {
             selectWithValue(button);
-            if (clickToWin == 0) JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "You Win");
+            if (clickToWin == 0) {
+                endGame();
+                JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "You Win");
+            }
         }
     }
 
-    public void cheat() {
+    private void endGame() {
         for (Button[] value : map) {
             for (int j = 0; j < map.length; j++) {
                 var bomb = value[j];
