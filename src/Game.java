@@ -2,11 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 
 public class Game extends JFrame {
-    private Size size;
-    private Button buttons;
     private Button[][] map;
     private JFrame frame;
     private JPanel game;
@@ -32,7 +32,7 @@ public class Game extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.setVisible(false);
-                new Game(Size.MEDIUM); // menu for size adjustment
+                new menu();
             }
         });
         frame.add(newGame);
@@ -194,22 +194,33 @@ public class Game extends JFrame {
             for (int columns = 0; columns < map.length; columns++) {
                 clickCounter++;
                 var newButton = new Button(rows, columns);
-                ActionListener action = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (!started){
-                            newButton.setFirst(true);
-                            newButton.setSelected(true);
-                            generatingAndCountingBombs();
-                            showField(newButton);
-                            started = true;
-                        } else {
+                newButton.addActionListener(e -> {
+                    if (!started && !newButton.isFlaged()){
+                        newButton.setFirst(true);
+                        generatingAndCountingBombs();
+                        showField(newButton);
+                        started = true;
+                        endGame();
+                    } else {
+                        if(!newButton.isFlaged()) {
                             newButton.setSelected(true);
                             showField(newButton);
                         }
                     }
-                };
-                newButton.addActionListener(action);
+                });
+                newButton.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getButton() == 3 && !isSelectedCell(newButton) && !newButton.isFlaged()){
+                            newButton.setFlaged(true);
+                            newButton.setIcon(new ImageIcon("flag.png"));
+                        } else if (e.getButton() == 3 && newButton.isFlaged()){
+                            newButton.setFlaged(false);
+                            newButton.setIcon(null);
+                            newButton.setSelected(false);
+                        }
+                    }
+                });
                 game.add(newButton);
                 map[rows][columns] = newButton;
             }
@@ -218,7 +229,7 @@ public class Game extends JFrame {
 
     private void showField(Button button) {
         if (button.getValue() == -1) {
-            button.setText("B");
+            button.setIcon(new ImageIcon("bomb.png"));
             button.setSelected(true);
             endGame();
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Game Over");
@@ -238,7 +249,11 @@ public class Game extends JFrame {
             for (int j = 0; j < map.length; j++) {
                 var bomb = value[j];
                 if (bomb.getValue() == -1) {
-                    bomb.setText("B");
+                    if (!bomb.isFlaged()) {
+                        bomb.setIcon(new ImageIcon("bomb.png"));
+                    } else {
+                        bomb.setIcon(new ImageIcon("bombSpotted.png"));
+                    }
                 }
             }
         }
@@ -270,7 +285,7 @@ public class Game extends JFrame {
     }
 
     private void selectWithValue(Button button) {
-        if (!button.isRevealed()) {
+        if (!button.isRevealed() && !button.isFlaged()) {
             clickToWin--;
             button.setSelected(true);
             button.setText(button.getValue() + "");
@@ -279,7 +294,7 @@ public class Game extends JFrame {
     }
 
     private void selectEmpty(Button button) {
-        if (!button.isRevealed()) {
+        if (!button.isRevealed() && !button.isFlaged()) {
             clickToWin--;
             button.setSelected(true);
             button.setText("");

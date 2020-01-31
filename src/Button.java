@@ -6,6 +6,7 @@ public class Button extends JToggleButton {
     private final int column;
     private boolean first;
     private boolean revealed;
+    private boolean isFlaged;
 
 
     public Button(int row, int column) {
@@ -40,6 +41,14 @@ public class Button extends JToggleButton {
 
     public boolean isRevealed(){
         return revealed;
+    }
+
+    public boolean isFlaged() {
+        return isFlaged;
+    }
+
+    public void setFlaged(boolean flaged) {
+        isFlaged = flaged;
     }
 
     public void setRevealed(boolean revealed) {
