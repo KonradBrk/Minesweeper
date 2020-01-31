@@ -9,7 +9,7 @@ public class Game extends JFrame {
     private Button buttons;
     private Button[][] map;
     private JFrame frame;
-    private JPanel layout;
+    private JPanel game;
     private boolean started;
     private int bombCounter;
     private int clickCounter;
@@ -18,32 +18,63 @@ public class Game extends JFrame {
     public Game(Size size) {
         this.frame = new JFrame("Minesweeper");
         frameSizeAdjustment(size);
+        menuPanel();
         printingUi();
         frameOtherAdjustments();
         this.started = false;
     }
 
+    public void menuPanel(){
+        JButton newGame = new JButton("New Game!");
+        newGame.setFocusable(false);
+        newGame.setBounds(500,15,100,50);
+        newGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                new Game(Size.MEDIUM); // menu for size adjustment
+            }
+        });
+        frame.add(newGame);
+
+
+        JLabel author = new JLabel("Made by Konrad Brylak");
+
+        author.setBounds(1245,820,200,50);
+        author.setVisible(true);
+        frame.add(author);
+
+    }
+
     private void frameSizeAdjustment(Size size) {
         if (size == Size.SMALL) {
             this.map = new Button[8][8];
-            this.layout = new JPanel(new GridLayout(8, 8));
+            this.game = new JPanel(new GridLayout(8, 8));
+            this.game.setBounds(0,80,1385,755);
+            frame.add(game);
             frame.setSize(1400, 900);
         }
         if (size == Size.MEDIUM) {
             this.map = new Button[16][16];
-            this.layout = new JPanel(new GridLayout(16, 16));
+            this.game = new JPanel(new GridLayout(16, 16));
+            this.game.setBounds(0,80,1385,755);
+            frame.add(game);
             frame.setSize(1400, 900);
         }
         if (size == Size.LARGE) {
             this.map = new Button[32][32];
-            this.layout = new JPanel(new GridLayout(32, 32));
+            this.game = new JPanel(new GridLayout(32, 32));
+            this.game.setBounds(0,80,1385,755);
+            frame.add(game);
             frame.setSize(1400, 900);
         }
     }
 
     private void frameOtherAdjustments() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(layout);
+        frame.getContentPane().add(game);
+        frame.setResizable(false);
+        frame.setLayout(null);
         frame.setVisible(true);
     }
 
@@ -97,7 +128,7 @@ public class Game extends JFrame {
         }
     }
 
-    private void checkingCellsWithValues(Button button) {
+    private void checkingCellsWithValuesAround(Button button) {
 
         int startRow = 0;
         int startColumn = 0;
@@ -179,7 +210,7 @@ public class Game extends JFrame {
                     }
                 };
                 newButton.addActionListener(action);
-                layout.add(newButton);
+                game.add(newButton);
                 map[rows][columns] = newButton;
             }
         }
@@ -215,7 +246,7 @@ public class Game extends JFrame {
 
     private void showAllEmptyFields(Button button) {
         selectEmpty(button);
-        checkingCellsWithValues(button);
+        checkingCellsWithValuesAround(button);
         if (canGoRight(button)) {
             var nextButton = map[button.getRow()][button.getColumn() + 1];
             if (!isSelectedCell(nextButton) && nextButton.getValue() == 0)
