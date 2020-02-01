@@ -200,7 +200,6 @@ public class Game extends JFrame {
                         generatingAndCountingBombs();
                         showField(newButton);
                         started = true;
-                        endGame();
                     } else {
                         if(!newButton.isFlaged()) {
                             newButton.setSelected(true);
