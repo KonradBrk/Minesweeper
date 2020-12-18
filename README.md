@@ -1,3 +1,2 @@
 # The Minesweeper Game
-The game was made after 2 months of the training.
-It has sentimental value :)
+Simple game based on Java - SWING with little graphical enhancement like flags and bombs.
